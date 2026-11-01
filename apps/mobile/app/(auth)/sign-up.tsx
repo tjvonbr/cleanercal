@@ -262,7 +262,7 @@ export default function SignUpScreen() {
                 {/* Sign in Link */}
                 <Pressable style={styles.secondaryButton}>
                   <Link href="/(auth)" asChild>
-                    <Text style={[styles.secondaryButtonText, { color: '#666' }]}>
+                    <Text style={StyleSheet.flatten([styles.secondaryButtonText, { color: '#666' }])}>
                       Already have an account? Sign in
                     </Text>
                   </Link>
