@@ -22,6 +22,8 @@
     "packages/*"
   ],
   "dependencies": {
-    "pretty-format": "^29.7.0"
+    "expo-router": "~58.0.28",
+    "pretty-format": "^29.7.0",
+    "react": "19.3.0"
   }
 }
