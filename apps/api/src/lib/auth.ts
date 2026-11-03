@@ -4,6 +4,7 @@ import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { betterAuth } from "better-auth";
 import { prisma } from './prisma.js';
 import VerifyEmail from './emails/verify-email.js';
+import ResetPasswordEmail from './emails/reset-password.js';
 import { getResend } from './resend.js';
 
 
@@ -15,6 +16,8 @@ const trustedOrigins = [
   'https://localhost:3000',
   'http://localhost:3001',
   'exp://localhost:8081',
+  'smallbreeze-mobile://',
+  'smallbreeze-mobile://*',
 ].filter(Boolean) as string[];
 
 // In development, trust requests from any of this machine's LAN IPs so
@@ -64,6 +67,26 @@ export const auth = betterAuth({
   trustedOrigins,
   emailAndPassword: {
     enabled: true,
+    resetPasswordTokenExpiresIn: 60 * 60,
+    sendResetPassword: async ({ user, url }) => {
+      const resend = getResend();
+      if (!resend) {
+        console.warn('RESEND_API_KEY missing; skipping password reset email send.');
+        return;
+      }
+      // Not awaited, to avoid leaking account existence through response timing.
+      resend.emails
+        .send({
+          from: `${process.env.EMAIL_SENDER_NAME} <${process.env.EMAIL_SENDER_ADDRESS}>`,
+          to: user.email,
+          subject: 'Reset your password',
+          react: ResetPasswordEmail({ email: user.email, resetUrl: url }),
+        })
+        .then(({ error }) => {
+          if (error) console.error('Failed to send password reset email:', error);
+        })
+        .catch((err) => console.error('Failed to send password reset email:', err));
+    },
   },
   socialProviders: Object.keys(socialProviders).length > 0 ? socialProviders : undefined,
   emailVerification: {
