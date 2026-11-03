@@ -170,6 +170,12 @@ export default function SignInScreen() {
               </Pressable>
             </View>
 
+            <Link href="/(auth)/forgot-password" asChild>
+              <Pressable style={styles.forgotLink} hitSlop={8}>
+                <Text style={[styles.forgotLinkText, { color: colors.text }]}>Forgot password?</Text>
+              </Pressable>
+            </Link>
+
             {error && <Text style={styles.errorText}>{error}</Text>}
 
             {/* Sign In Button */}
@@ -321,6 +327,14 @@ const styles = StyleSheet.create({
     top: '50%',
     transform: [{ translateY: -10 }], // Center vertically
     zIndex: 2,
+  },
+  forgotLink: {
+    alignSelf: 'flex-end',
+    marginTop: -4,
+  },
+  forgotLinkText: {
+    fontSize: 14,
+    fontFamily: FontFamily.medium,
   },
   errorText: {
     color: '#FF6B6B',

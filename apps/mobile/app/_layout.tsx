@@ -8,7 +8,7 @@ import {
   LeagueSpartan_800ExtraBold,
 } from '@expo-google-fonts/league-spartan';
 import { useFonts } from 'expo-font';
-import { DarkTheme, DefaultTheme, Redirect, Stack, ThemeProvider } from 'expo-router';
+import { DarkTheme, DefaultTheme, Redirect, Stack, ThemeProvider, usePathname } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
@@ -38,6 +38,9 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   const { data: session, isPending } = authClient.useSession();
   const isAuthenticated = !!session;
+  const pathname = usePathname();
+  // Don't redirect away from the password reset screen opened via email deep link
+  const onResetScreen = pathname.includes('reset-password');
 
   const [fontsLoaded] = useFonts({
     LeagueSpartan_400Regular,
@@ -88,7 +91,8 @@ export default function RootLayout() {
             <Stack.Screen name="year" />
             <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
           </Stack>
-          {isAuthenticated ? <Redirect href="/(tabs)" /> : <Redirect href="/(auth)" />}
+          {!onResetScreen &&
+            (isAuthenticated ? <Redirect href="/(tabs)" /> : <Redirect href="/(auth)" />)}
           <StatusBar style="auto" />
         </ListingsProvider>
       </ThemeProvider>
